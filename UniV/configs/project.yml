@@ -1,0 +1,8 @@
+config:
+	galaxy: ./configs/galaxy.yml
+	solarsystem: ./configs/solar.yml
+	universe: ./configs/universe.yml
+	logname: ./logs/univ.log
+	
+	
+	
