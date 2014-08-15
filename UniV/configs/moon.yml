@@ -1,0 +1,5 @@
+config:
+	size_x: 5
+	size_y: 5
+	name: Moon
+	max: 3
