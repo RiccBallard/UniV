@@ -8,7 +8,11 @@ use Moose;
 use Moose::Util::TypeConstraints;
 
 use namespace::autoclean;
+#use Galaxy; 
 use Location; 
+use MooseX::Storage;
+our $VERSION = '0.01';  
+with Storage('format' => 'JSON', 'io' => 'File');
 
 
 has 'loc' => (
@@ -19,11 +23,12 @@ has 'loc' => (
 has 'name' => (
 	is => 'rw',
 	isa => 'Str',
-	);
+);
 
 has 'logger' => (
 	is => 'rw',
 	isa => 'Log::Log4perl::Logger',
+	traits   => [ 'DoNotSerialize' ],
 );
 
 has 'config' => (
@@ -31,12 +36,38 @@ has 'config' => (
 	isa => 'HashRef',
 );
 
+has 'class_type' => (
+	is => 'rw',
+	isa => 'Str',
+);
+
+has 'size' => (
+	is => 'rw',
+	isa => 'Int',
+);
+
+has 'moon_cnt' => (
+	is => 'rw',
+	isa => 'Int',
+);
+
+has 'moons' => (
+	is => 'rw',
+	isa => 'HashRef[UniverseLIB::Moon]',
+);
+
+has 'in_solarsystem' => (
+	is => 'ro',
+	isa => 'HashRef[UniverseLIB::SolarSystem]',
+);
+
 sub init {
 	my $self=shift;
 	my $args=shift;
-#	
-#	my $yaml = YAML::Tiny->read($self->{config}->{galaxy}) || die "could not find config file " . $self->{config}->{galaxy};
-#	my $galaxy_config = $yaml->[0]->{config};
+	
+	$self->{config} = UniverseLIB::Configuration->instance->get_config('moon');
+	
+#	$self->{name}=$self->{in_solarsystem}->{name}." / " . $self->{name};
 	
 	#create solar systems
 #	for (my $x=0; $x < $galaxy_config->{size}; $x++) {
@@ -47,6 +78,27 @@ sub init {
 #		}	
 #	} 	
 }
+
+sub pulse {
+	my $self=shift;
+	$self->communicate("nudging life...");
+#	foreach my $moon( keys ($self->{moons})) {
+#		$self->{moons}->{$moon}->pulse();
+#	}
+}
+
+sub communicate {
+	my $self=shift;
+	my $msg=shift;
+	$self->{logger}->info("<" . $self->{name} . "> $msg");
+}
+
+#sub store_me {
+#	my $self=shift;
+#	
+#	$self->freeze();
+#	$self->store('planet.json'); 
+#}
 
 sub dumpme {
 	my $self=shift;

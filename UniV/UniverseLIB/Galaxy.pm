@@ -10,10 +10,15 @@ use Moose::Util::TypeConstraints;
 use namespace::autoclean;
 use Location; 
 use SolarSystem; 
+use MooseX::Storage;
+our $VERSION = '0.01';  
+with Storage('format' => 'JSON', 'io' => 'File');
+  
 
 has 'loc' => (
 	is => 'rw',
 	isa => 'UniverseLIB::Location',
+	required => 1,
 );
 
 has 'name' => (
@@ -29,29 +34,55 @@ has 'solarsystems' => (
 has 'logger' => (
 	is => 'rw',
 	isa => 'Log::Log4perl::Logger',
+	traits   => [ 'DoNotSerialize' ],
+	required => 1,
 );
 
 has 'config' => (
 	is => 'rw',
 	isa => 'HashRef',
+	required => 0,
+);
+
+has 'in_universe' => (
+	is => 'rw',
+	isa => 'UniverseLIB::Universe',
 );
 
 sub init {
 	my $self=shift;
 	my $args=shift;
 	
-	my $yaml = YAML::Tiny->read($self->{config}->{solarsystem}) || die "could not find config file " . $self->{config}->{solarsystem};
-	my $ss_config = $yaml->[0]->{config};
-	
+	$self->{config} = UniverseLIB::Configuration->instance->get_config('solarsystem');
+		
 	#create solar systems
-	for (my $x=0; $x < $ss_config->{size_x}; $x++) {
-		for (my $y=0; $y < $ss_config->{size_y}; $y++) {
+	for (my $x=0; $x < $self->{config}->{size_x}; $x++) {
+		for (my $y=0; $y < $self->{config}->{size_y}; $y++) {
 			my $loc = UniverseLIB::Location->new(x=>$x, y=>$y, z=>0);
-			my $ss = UniverseLIB::SolarSystem->new( logger=>$self->{logger}, config=>$self->{config}, name=>"x=$x y=$y", loc=>$loc);
+			my $ss = UniverseLIB::SolarSystem->new( logger=>$self->{logger}, name=>"Solar System $x-$y", in_galaxy=>$self, loc=>$loc);
+			$ss->{name}=$self->{name}." / " . $ss->{name};
 			$ss->init();
 			$self->{solarsystems}{"$x,$y,0"}=$ss;
 		}	
 	} 	
+} 
+
+sub pulse {
+	my $self=shift;
+	$self->communicate("nudging life...");
+	foreach my $solarsystem( keys ($self->{solarsystems})) {
+		$self->{solarsystems}->{$solarsystem}->pulse();
+	}
+}
+
+sub communicate {
+	my $self=shift;
+	my $msg=shift;
+	$self->{logger}->info("<" . $self->{name} . "> $msg");
+}
+
+sub save_solarsystem {
+	
 }
 
 sub dumpme {

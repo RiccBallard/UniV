@@ -10,6 +10,10 @@ use Moose::Util::TypeConstraints;
 use namespace::autoclean;
 use Location; 
 use Planet;
+#use Galaxy;
+use MooseX::Storage;
+our $VERSION = '0.01';
+with Storage('format' => 'JSON', 'io' => 'File');
 
 has 'loc' => (
 	is => 'rw',
@@ -29,6 +33,7 @@ has 'planets' => (
 has 'logger' => (
 	is => 'rw',
 	isa => 'Log::Log4perl::Logger',
+	traits   => [ 'DoNotSerialize' ],
 );
 
 has 'config' => (
@@ -36,22 +41,41 @@ has 'config' => (
 	isa => 'HashRef',
 );
 
+has 'in_galaxy' => (
+	is => 'rw',
+	isa => 'UniverseLIB::Galaxy',
+);
+
 sub init {
 	my $self=shift;
 	my $args=shift;
 	
-	my $yaml = YAML::Tiny->read($self->{config}->{planet}) || die "could not find config file " . $self->{config}->{planet};
-	my $planet_config = $yaml->[0]->{config};
-	
+	$self->{config} = UniverseLIB::Configuration->instance->get_config('planet');
+		
 	#create solar systems
-	for (my $x=0; $x < $planet_config->{size_x}; $x++) {
-		for (my $y=0; $y < $planet_config->{size_y}; $y++) {
+	for (my $x=0; $x < $self->{config}->{size_x}; $x++) {
+		for (my $y=0; $y < $self->{config}->{size_y}; $y++) {
 			my $loc = UniverseLIB::Location->new(x=>$x, y=>$y, z=>0);
-			my $planet = UniverseLIB::Planet->new( logger=>$self->{logger}, config=>$self->{config}, name=>"x=$x y=$y", loc=>$loc);
+			my $planet = UniverseLIB::Planet->new( logger=>$self->{logger}, name=>"Planet $x-$y", loc=>$loc);
+			$planet->{name}=$self->{name}." / " . $planet->{name};
 			$planet->init();
 			$self->{planets}{"$x,$y,0"}=$planet;
 		}	
 	} 	
+}
+
+sub pulse {
+	my $self=shift;
+	$self->communicate("nudging life...");
+	foreach my $planet( keys ($self->{planets})) {
+		$self->{planets}->{$planet}->pulse();
+	}
+}
+
+sub communicate {
+	my $self=shift;
+	my $msg=shift;
+	$self->{logger}->info("<" . $self->{name} . "> $msg");
 }
 
 sub dumpme {

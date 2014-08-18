@@ -1,9 +1,10 @@
 config:
+	name: Project
 	galaxy: ./configs/galaxy.yml
 	solarsystem: ./configs/solar.yml
 	universe: ./configs/universe.yml
-	planet:	 ./configs/planet.yml
-	
+	planet: ./configs/planet.yml
+	moon: ./configs/moon.yml
 	
 	
 	
