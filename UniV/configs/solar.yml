@@ -1,4 +1,4 @@
 config:
 	size_x: 3
-	size_y: 2
+	size_y: 3
 	name: Solar System
