@@ -24,29 +24,31 @@ my $logger = Log::Log4perl->get_logger();
 $logger->info("Starting Univ Engine");
 
 
-my ( $debug, $verbose, $force, $configFname, $HOSTNAME );
+my ( $debug, $verbose, $force, $configFname, $HOSTNAME, $fake );
 GetOptions(
 			"debug"    => \$debug,
 			"verbose"  => \$verbose,
 			"c=s"      => \$configFname,
 			"config=s" => \$configFname,
 			"hostname=s" => \$HOSTNAME,
+			"fake"		=> \$fake,
 );
 
 display_env();
 
-my $config = init( "./configs/project.yml" );
-my $universe_config = $config->{universe};
-my $galaxy_config = $config->{galaxy};
-my $solar_system_config = $config->{solarsystem};
-
-my $universe_obj = UniverseLIB::Universe->new( config=>$config, logger=>$logger );
+UniverseLIB::Configuration->initialize(filename=>"./configs/project.yml");
+my $universe_obj = UniverseLIB::Universe->new(logger=>$logger );
 $universe_obj->init();
-say "Universe:" . Data::Dumper->Dump([$universe_obj]);
-#$universe_obj->dumpme();
+#say "Universe:" . Data::Dumper->Dump([$universe_obj]);
 
-$logger->info("Hello Universe how are you!");
+$universe_obj->{debug}=1;
 
+if ($fake) {
+	while (1) {
+		$universe_obj->pulse();
+		sleep(10);
+	}
+}
 exit(0);
 
 

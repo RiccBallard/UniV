@@ -14,6 +14,10 @@ use MooseX::Storage;
 our $VERSION = '0.01';  
 with Storage('format' => 'JSON', 'io' => 'File');
 
+has 'debug' => (
+	is => 'rw',
+	isa => 'Bool',
+);
 
 has 'loc' => (
 	is => 'rw',
@@ -56,9 +60,9 @@ has 'moons' => (
 	isa => 'HashRef[UniverseLIB::Moon]',
 );
 
-has 'in_solarsystem' => (
+has 'my_sun' => (
 	is => 'ro',
-	isa => 'HashRef[UniverseLIB::SolarSystem]',
+	isa => 'UniverseLIB::Sun',
 );
 
 sub init {
@@ -66,6 +70,9 @@ sub init {
 	my $args=shift;
 	
 	$self->{config} = UniverseLIB::Configuration->instance->get_config('moon');
+#	die "invalid x in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_x} ));
+#	die "invalid y in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_y} ));
+	
 	
 #	$self->{name}=$self->{in_solarsystem}->{name}." / " . $self->{name};
 	
@@ -81,10 +88,15 @@ sub init {
 
 sub pulse {
 	my $self=shift;
-	$self->communicate("nudging life...");
+	$self->communicate("nudging life...")  if ($self->{debug});
 #	foreach my $moon( keys ($self->{moons})) {
 #		$self->{moons}->{$moon}->pulse();
 #	}
+}
+
+sub validate_cords {
+	return 1 if ($_ % 2 == 1);
+	return 0;
 }
 
 sub communicate {
