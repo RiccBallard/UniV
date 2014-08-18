@@ -14,6 +14,10 @@ use MooseX::Storage;
 our $VERSION = '0.01';  
 with Storage('format' => 'JSON', 'io' => 'File');
   
+has 'debug' => (
+	is => 'rw',
+	isa => 'Bool',
+);
 
 has 'loc' => (
 	is => 'rw',
@@ -54,10 +58,12 @@ sub init {
 	my $args=shift;
 	
 	$self->{config} = UniverseLIB::Configuration->instance->get_config('solarsystem');
-		
+	die "invalid x in Galaxy" if ( ! validate_cords( $self->{config}->{size_x} ));
+	die "invalid y in Galaxy" if ( ! validate_cords( $self->{config}->{size_y} ));
+	
 	#create solar systems
-	for (my $x=0; $x < $self->{config}->{size_x}; $x++) {
-		for (my $y=0; $y < $self->{config}->{size_y}; $y++) {
+	for (my $x=1; $x < ($self->{config}->{size_x}+1); $x++) {
+		for (my $y=1; $y < ($self->{config}->{size_y}+1); $y++) {
 			my $loc = UniverseLIB::Location->new(x=>$x, y=>$y, z=>0);
 			my $ss = UniverseLIB::SolarSystem->new( logger=>$self->{logger}, name=>"Solar System $x-$y", in_galaxy=>$self, loc=>$loc);
 			$ss->{name}=$self->{name}." / " . $ss->{name};
@@ -67,9 +73,15 @@ sub init {
 	} 	
 } 
 
+sub validate_cords {
+	my $parm=shift;
+	return 1 if ($parm % 2 == 1);
+	return 0;
+}
+
 sub pulse {
 	my $self=shift;
-	$self->communicate("nudging life...");
+	$self->communicate("Scanning Galaxy life...")  if ($self->{debug});
 	foreach my $solarsystem( keys ($self->{solarsystems})) {
 		$self->{solarsystems}->{$solarsystem}->pulse();
 	}

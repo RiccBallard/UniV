@@ -4,16 +4,21 @@ package UniverseLIB::SolarSystem;
 use Modern::Perl '2013';
 use Data::Dumper;
 use Log::Log4perl;
+use POSIX;
 use Moose;
 use Moose::Util::TypeConstraints;
 
 use namespace::autoclean;
-use Location; 
-use Planet;
-#use Galaxy;
+use Location;
+use Sun;
 use MooseX::Storage;
 our $VERSION = '0.01';
 with Storage('format' => 'JSON', 'io' => 'File');
+
+has 'debug' => (
+	is => 'rw',
+	isa => 'Bool',
+);
 
 has 'loc' => (
 	is => 'rw',
@@ -25,9 +30,9 @@ has 'name' => (
 	isa => 'Str',
 	);
 
-has 'planets' => (
+has 'sun' => (
 	is => 'rw',
-	isa => 'HashRef[UniverseLIB::Planet]', 
+	isa => 'HashRef[UniverseLIB::Sun]', 
 );
 
 has 'logger' => (
@@ -51,25 +56,31 @@ sub init {
 	my $args=shift;
 	
 	$self->{config} = UniverseLIB::Configuration->instance->get_config('planet');
-		
-	#create solar systems
-	for (my $x=0; $x < $self->{config}->{size_x}; $x++) {
-		for (my $y=0; $y < $self->{config}->{size_y}; $y++) {
-			my $loc = UniverseLIB::Location->new(x=>$x, y=>$y, z=>0);
-			my $planet = UniverseLIB::Planet->new( logger=>$self->{logger}, name=>"Planet $x-$y", loc=>$loc);
-			$planet->{name}=$self->{name}." / " . $planet->{name};
-			$planet->init();
-			$self->{planets}{"$x,$y,0"}=$planet;
-		}	
-	} 	
+	die "invalid x in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_x} ));
+	die "invalid y in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_y} ));
+	
+	my $sun_x = ceil($self->{config}->{size_x}/2);
+	my $sun_y = ceil($self->{config}->{size_y}/2);
+	my $loc = UniverseLIB::Location->new(x=>$sun_x, y=>$sun_y, z=>0);
+	my $sun = UniverseLIB::Sun->new( logger=>$self->{logger}, name=>"Sun $sun_x-$sun_y", my_solar_system=>$self, loc=>$loc);
+	$sun->{name}=$self->{name}." / " . $sun->{name};
+	$sun->init();
+	$self->{sun}{"$sun_x,$sun_y,0"}=$sun;
+	 	
 }
 
 sub pulse {
 	my $self=shift;
-	$self->communicate("nudging life...");
-	foreach my $planet( keys ($self->{planets})) {
-		$self->{planets}->{$planet}->pulse();
+	$self->communicate("Scanning Solar System...")  if ($self->{debug});
+	foreach my $sun( keys ($self->{sun})) {
+		$self->{sun}->{$sun}->pulse();
 	}
+}
+
+sub validate_cords {
+	my $parm=shift;
+	return 1 if ($parm % 2 == 1);
+	return 0;
 }
 
 sub communicate {
