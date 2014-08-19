@@ -1,0 +1,8 @@
+config:
+	name: Planet
+	debug: 0
+	color: red,green,blue,yellow,gray,white,orange,gold
+	class_type: D,H,J,K,L,M,N,T,Y
+	development: no_life,primal,tech0,tech1,tech2,tech3,tech4,tech5,tech6
+	size: small,medium,large,huge,giant
+	class_names: Planetoid or moon uninhabitable,Generally uninhabitable,Gas giant,Adaptable with pressure domes,Marginally,Terrestrial,Sulfuric,Gas giant,Demon
