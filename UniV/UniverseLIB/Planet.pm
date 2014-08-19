@@ -73,9 +73,11 @@ sub init {
 #	die "invalid x in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_x} ));
 #	die "invalid y in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_y} ));
 	
+	# TODO: add moon or moons to planets
 	
 #	$self->{name}=$self->{in_solarsystem}->{name}." / " . $self->{name};
 	
+	# TODO: add size, color, class of planet
 	#create solar systems
 #	for (my $x=0; $x < $galaxy_config->{size}; $x++) {
 #		for (my $y=0; $y < $galaxy_config->{size}; $y++) {

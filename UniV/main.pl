@@ -12,7 +12,8 @@ use YAML::Tiny;
 use File::Basename;
 use Log::Log4perl;
 use UniverseLIB::Universe;
-  
+use UniverseLIB::PlanetFactory;
+
 # Initialize Logger
 my $log_conf = "./configs/log4perl.conf";
  
@@ -37,7 +38,8 @@ GetOptions(
 display_env();
 
 UniverseLIB::Configuration->initialize(filename=>"./configs/project.yml");
-my $universe_obj = UniverseLIB::Universe->new(logger=>$logger );
+UniverseLIB::PlanetFactory->initialize(logger=>$logger);
+my $universe_obj = UniverseLIB::Universe->new(logger=>$logger);
 $universe_obj->init();
 #say "Universe:" . Data::Dumper->Dump([$universe_obj]);
 

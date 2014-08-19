@@ -53,6 +53,9 @@ sub init {
 	die "invalid x in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_x} ));
 	die "invalid y in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_y} ));
 	
+	# TODO: add size and type of sun
+	my $planet_factory = UniverseLIB::PlanetFactory->instance;
+	
 	#create solar systems
 	for (my $x=1; $x < ($self->{config}->{size_x}+1); $x++) {
 		for (my $y=1; $y < ($self->{config}->{size_y}+1); $y++) {
@@ -60,9 +63,8 @@ sub init {
 			next if ( ($x == $self->{loc}->{x}) && ($y == $self->{loc}->{y}));
 			next if (rand(100) < 75);
 			my $loc = UniverseLIB::Location->new(x=>$x, y=>$y, z=>0);
-			my $planet = UniverseLIB::Planet->new( logger=>$self->{logger}, name=>"Planet $x-$y", my_sun=>$self, loc=>$loc);
-			$planet->{name}=$self->{name}." / " . $planet->{name};
-			$planet->init();
+#			my $planet = UniverseLIB::Planet->new( logger=>$self->{logger}, name=>"Planet $x-$y", my_sun=>$self, loc=>$loc);
+			my $planet = $planet_factory->make_planet({loc=>$loc, sun=>$self});
 			$self->{planets}{"$x,$y,0"}=$planet;
 		}	
 	} 	
@@ -74,6 +76,7 @@ sub pulse {
 	$self->communicate("Moving planets...")  if ($self->{debug});
 	
 	# Logic to move planets around its sun
+	# TODO: add moving logic pf planets
 	foreach my $planet( keys ($self->{planets})) {
 		$self->{planets}->{$planet}->pulse();
 	}
