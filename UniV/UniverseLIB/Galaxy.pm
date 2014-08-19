@@ -57,15 +57,18 @@ sub init {
 	my $self=shift;
 	my $args=shift;
 	
-	$self->{config} = UniverseLIB::Configuration->instance->get_config('solarsystem');
-	die "invalid x in Galaxy" if ( ! validate_cords( $self->{config}->{size_x} ));
-	die "invalid y in Galaxy" if ( ! validate_cords( $self->{config}->{size_y} ));
+	$self->{config} = UniverseLIB::Configuration->instance->get_config('galaxy');
+	$self->{debug} = $self->{config}->{debug} if (! $self->debug);
+	my $solar_system = UniverseLIB::Configuration->instance->get_config('solarsystem');
+	
+	die "invalid x in Galaxy" if ( ! validate_cords( $solar_system->{size_x} ));
+	die "invalid y in Galaxy" if ( ! validate_cords( $solar_system->{size_y} ));
 	
 	#create solar systems
-	for (my $x=1; $x < ($self->{config}->{size_x}+1); $x++) {
-		for (my $y=1; $y < ($self->{config}->{size_y}+1); $y++) {
+	for (my $x=1; $x < ($solar_system->{size_x}+1); $x++) {
+		for (my $y=1; $y < ($solar_system->{size_y}+1); $y++) {
 			my $loc = UniverseLIB::Location->new(x=>$x, y=>$y, z=>0);
-			my $ss = UniverseLIB::SolarSystem->new( logger=>$self->{logger}, name=>"Solar System $x-$y", in_galaxy=>$self, loc=>$loc);
+			my $ss = UniverseLIB::SolarSystem->new( logger=>$self->{logger}, name=>$solar_system->{name}. " $x-$y", in_galaxy=>$self, loc=>$loc);
 			$ss->{name}=$self->{name}." / " . $ss->{name};
 			$ss->init();
 			$self->{solarsystems}{"$x,$y,0"}=$ss;

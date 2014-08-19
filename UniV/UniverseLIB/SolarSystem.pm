@@ -55,17 +55,21 @@ sub init {
 	my $self=shift;
 	my $args=shift;
 	
-	$self->{config} = UniverseLIB::Configuration->instance->get_config('planet');
-	die "invalid x in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_x} ));
-	die "invalid y in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_y} ));
+	$self->{config} = UniverseLIB::Configuration->instance->get_config('solarsystem');
+	$self->{debug} = $self->{config}->{debug} if (! $self->debug);
+	my $planet_config = UniverseLIB::Configuration->instance->get_config('planet');
 	
-	my $sun_x = ceil($self->{config}->{size_x}/2);
-	my $sun_y = ceil($self->{config}->{size_y}/2);
+	die "invalid x in " . $planet_config->{name} if ( ! validate_cords( $planet_config->{size_x} ));
+	die "invalid y in " . $planet_config->{name} if ( ! validate_cords( $planet_config->{size_y} ));
+	
+	my $sun_x = ceil($planet_config->{size_x}/2);
+	my $sun_y = ceil($planet_config->{size_y}/2);
 	my $loc = UniverseLIB::Location->new(x=>$sun_x, y=>$sun_y, z=>0);
 	my $sun = UniverseLIB::Sun->new( logger=>$self->{logger}, name=>"Sun $sun_x-$sun_y", my_solar_system=>$self, loc=>$loc);
 	$sun->{name}=$self->{name}." / " . $sun->{name};
 	$sun->init();
 	$self->{sun}{"$sun_x,$sun_y,0"}=$sun;
+	
 	 	
 }
 

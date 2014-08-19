@@ -50,6 +50,7 @@ sub init {
 	my $args=shift;
 	
 	$self->{config} = UniverseLIB::Configuration->instance->get_config('planet');
+	$self->{debug} = $self->{config}->{debug} if (! $self->debug);
 	die "invalid x in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_x} ));
 	die "invalid y in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_y} ));
 	

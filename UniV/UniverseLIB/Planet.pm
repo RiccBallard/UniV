@@ -69,7 +69,9 @@ sub init {
 	my $self=shift;
 	my $args=shift;
 	
-	$self->{config} = UniverseLIB::Configuration->instance->get_config('moon');
+	$self->{config} = UniverseLIB::Configuration->instance->get_config('planet');
+	my $moon_config = UniverseLIB::Configuration->instance->get_config('moon');
+	$self->{debug} = $self->{config}->{debug} if (! $self->debug);
 #	die "invalid x in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_x} ));
 #	die "invalid y in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_y} ));
 	

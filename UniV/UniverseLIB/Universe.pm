@@ -55,17 +55,20 @@ sub init {
 	my $self=shift;
 	my $args=shift;
 	
-	$self->{config} = UniverseLIB::Configuration->instance->get_config('galaxy');
+	$self->{config} = UniverseLIB::Configuration->instance->get_config('universe');
+	$self->{debug} = $self->{config}->{debug} if (! $self->debug);
+	my $galaxy_config = UniverseLIB::Configuration->instance->get_config('galaxy');
 	$self->{name} = "Universe";
-	die "invalid x in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_x} ));
-	die "invalid y in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_y} ));
+	die "invalid x in " . $galaxy_config->{name} if ( ! validate_cords( $galaxy_config->{size_x} ));
+	die "invalid y in " . $galaxy_config->{name} if ( ! validate_cords( $galaxy_config->{size_y} ));
 	
 	#create Galaxies
-	for (my $x=1; $x < ($self->{config}->{size_x}+1); $x++) {
-		for (my $y=1; $y < ($self->{config}->{size_y}+1); $y++) {
+	for (my $x=1; $x < ($galaxy_config->{size_x}+1); $x++) {
+		for (my $y=1; $y < ($galaxy_config->{size_y}+1); $y++) {
 			my $loc = UniverseLIB::Location->new(x=>$x, y=>$y, z=>0);
-			my $gal = UniverseLIB::Galaxy->new( logger=>$self->{logger}, name=>"Galaxy $x-$y", in_universe=>$self, loc=>$loc);
+			my $gal = UniverseLIB::Galaxy->new( logger=>$self->{logger}, name=>$galaxy_config->{name} . " $x-$y", in_universe=>$self, loc=>$loc);
 			$gal->init();
+			$gal->{debug}=$galaxy_config->{debug};
 			$self->{galaxies}{"$x,$y,0"}=$gal;
 		}	
 	} 	
