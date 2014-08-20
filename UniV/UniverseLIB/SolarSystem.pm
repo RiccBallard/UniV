@@ -9,41 +9,18 @@ use Moose;
 use Moose::Util::TypeConstraints;
 
 use namespace::autoclean;
-use Location;
+use Objects::Location;
+use Objects::Space;
 use Sun;
 use MooseX::Storage;
 our $VERSION = '0.01';
 with Storage('format' => 'JSON', 'io' => 'File');
 
-has 'debug' => (
-	is => 'rw',
-	isa => 'Bool',
-);
-
-has 'loc' => (
-	is => 'rw',
-	isa => 'UniverseLIB::Location',
-);
-
-has 'name' => (
-	is => 'rw',
-	isa => 'Str',
-	);
+extends 'UniverseLIB::Objects::Space';
 
 has 'sun' => (
 	is => 'rw',
 	isa => 'HashRef[UniverseLIB::Sun]', 
-);
-
-has 'logger' => (
-	is => 'rw',
-	isa => 'Log::Log4perl::Logger',
-	traits   => [ 'DoNotSerialize' ],
-);
-
-has 'config' => (
-	is => 'rw',
-	isa => 'HashRef',
 );
 
 has 'in_galaxy' => (
@@ -64,7 +41,7 @@ sub init {
 	
 	my $sun_x = ceil($planet_config->{size_x}/2);
 	my $sun_y = ceil($planet_config->{size_y}/2);
-	my $loc = UniverseLIB::Location->new(x=>$sun_x, y=>$sun_y, z=>0);
+	my $loc = UniverseLIB::Objects::Location->new(x=>$sun_x, y=>$sun_y, z=>0);
 	my $sun = UniverseLIB::Sun->new( logger=>$self->{logger}, name=>"Sun $sun_x-$sun_y", my_solar_system=>$self, loc=>$loc);
 	$sun->{name}=$self->{name}." / " . $sun->{name};
 	$sun->init();
@@ -87,16 +64,11 @@ sub validate_cords {
 	return 0;
 }
 
-sub communicate {
-	my $self=shift;
-	my $msg=shift;
-	$self->{logger}->info("<" . $self->{name} . "> $msg");
-}
+#sub communicate {
+#	my $self=shift;
+#	my $msg=shift;
+#	$self->{logger}->info("<" . $self->{name} . "> $msg");
+#}
 
-sub dumpme {
-	my $self=shift;
-	
-	say Data::Dumper->Dump([$self->{planets}]);
-}
 __PACKAGE__->meta->make_immutable;
 1;

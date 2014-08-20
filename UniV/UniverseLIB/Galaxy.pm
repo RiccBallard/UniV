@@ -8,45 +8,21 @@ use Moose;
 use Moose::Util::TypeConstraints;
 
 use namespace::autoclean;
-use Location; 
+use Objects::Location;
+use Objects::Space;  
 use SolarSystem; 
 use MooseX::Storage;
 our $VERSION = '0.01';  
 with Storage('format' => 'JSON', 'io' => 'File');
   
-has 'debug' => (
-	is => 'rw',
-	isa => 'Bool',
-);
-
-has 'loc' => (
-	is => 'rw',
-	isa => 'UniverseLIB::Location',
-	required => 1,
-);
-
-has 'name' => (
-	is => 'rw',
-	isa => 'Str',
-	);
+extends 'UniverseLIB::Objects::Space';
+  
 
 has 'solarsystems' => (
 	is => 'rw',
 	isa => 'HashRef[UniverseLIB::SolarSystem]', 
 );
 
-has 'logger' => (
-	is => 'rw',
-	isa => 'Log::Log4perl::Logger',
-	traits   => [ 'DoNotSerialize' ],
-	required => 1,
-);
-
-has 'config' => (
-	is => 'rw',
-	isa => 'HashRef',
-	required => 0,
-);
 
 has 'in_universe' => (
 	is => 'rw',
@@ -67,7 +43,7 @@ sub init {
 	#create solar systems
 	for (my $x=1; $x < ($solar_system->{size_x}+1); $x++) {
 		for (my $y=1; $y < ($solar_system->{size_y}+1); $y++) {
-			my $loc = UniverseLIB::Location->new(x=>$x, y=>$y, z=>0);
+			my $loc = UniverseLIB::Objects::Location->new(x=>$x, y=>$y, z=>0);
 			my $ss = UniverseLIB::SolarSystem->new( logger=>$self->{logger}, name=>$solar_system->{name}. " $x-$y", in_galaxy=>$self, loc=>$loc);
 			$ss->{name}=$self->{name}." / " . $ss->{name};
 			$ss->init();
@@ -90,20 +66,15 @@ sub pulse {
 	}
 }
 
-sub communicate {
-	my $self=shift;
-	my $msg=shift;
-	$self->{logger}->info("<" . $self->{name} . "> $msg");
-}
+#sub communicate {
+#	my $self=shift;
+#	my $msg=shift;
+#	$self->{logger}->info("<" . $self->{name} . "> $msg");
+#}
 
 sub save_solarsystem {
 	
 }
 
-sub dumpme {
-	my $self=shift;
-	
-	say Data::Dumper->Dump([$self->{solarsystems}]);
-}
 __PACKAGE__->meta->make_immutable;
 1;

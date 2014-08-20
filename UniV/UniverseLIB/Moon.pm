@@ -8,23 +8,10 @@ use Moose;
 use Moose::Util::TypeConstraints;
 
 use namespace::autoclean;
-use Location; 
+use Objects::Space;
+use Objects::Location; 
 
-has 'loc' => (
-	is => 'rw',
-	isa => 'UniverseLIB::Location',
-);
-
-has 'name' => (
-	is => 'rw',
-	isa => 'Str',
-);
-
-has 'logger' => (
-	is => 'rw',
-	isa => 'Log::Log4perl::Logger',
-	traits   => [ 'DoNotSerialize' ],
-);
+extends 'UniverseLIB::Objects::Space';
 
 has 'my_planet' => (
 	is => 'ro',
@@ -41,16 +28,5 @@ sub pulse {
 	$self->communicate("nudging life...");
 }
 
-sub communicate {
-	my $self=shift;
-	my $msg=shift;
-	$self->{logger}->info("<" . $self->{name} . "> $msg");
-}
-
-sub dumpme {
-	my $self=shift;
-	
-	say Data::Dumper->Dump([$self]);
-}
 __PACKAGE__->meta->make_immutable;
 1;

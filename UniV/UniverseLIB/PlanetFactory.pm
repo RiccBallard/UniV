@@ -51,7 +51,7 @@ has 'clazz_type' => (
 has 'clazz_names' => (
 	is => 'rw',
 	isa => 'ArrayRef',
-	default => sub { [] },
+	default => sub { [] }, 
 );
 
 sub make_planet {

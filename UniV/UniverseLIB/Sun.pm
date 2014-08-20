@@ -11,29 +11,11 @@ our $VERSION = '0.01';
 with Storage('format' => 'JSON', 'io' => 'File');
 
 use namespace::autoclean;
-use Location; 
-use Planet;
+use Objects::Location; 
+use Objects::Space;
+use Planet; 
 
-has 'debug' => (
-	is => 'rw',
-	isa => 'Bool',
-);
-
-has 'loc' => (
-	is => 'rw',
-	isa => 'UniverseLIB::Location',
-);
-
-has 'name' => (
-	is => 'rw',
-	isa => 'Str',
-);
-
-has 'logger' => (
-	is => 'rw',
-	isa => 'Log::Log4perl::Logger',
-	traits   => [ 'DoNotSerialize' ],
-);
+extends 'UniverseLIB::Objects::Space';
 
 has 'planets' => (
 	is => 'ro',
@@ -63,7 +45,7 @@ sub init {
 			# Skip suns location
 			next if ( ($x == $self->{loc}->{x}) && ($y == $self->{loc}->{y}));
 			next if (rand(100) < 75);
-			my $loc = UniverseLIB::Location->new(x=>$x, y=>$y, z=>0);
+			my $loc = UniverseLIB::Objects::Location->new(x=>$x, y=>$y, z=>0);
 #			my $planet = UniverseLIB::Planet->new( logger=>$self->{logger}, name=>"Planet $x-$y", my_sun=>$self, loc=>$loc);
 			my $planet = $planet_factory->make_planet({loc=>$loc, sun=>$self});
 			$self->{planets}{"$x,$y,0"}=$planet;
@@ -78,8 +60,10 @@ sub pulse {
 	
 	# Logic to move planets around its sun
 	# TODO: add moving logic pf planets
-	foreach my $planet( keys ($self->{planets})) {
-		$self->{planets}->{$planet}->pulse();
+	if ($self->{planets}) {
+		foreach my $planet( keys ($self->{planets})) {
+			$self->{planets}->{$planet}->pulse();
+		}
 	}
 }
 
@@ -89,16 +73,5 @@ sub validate_cords {
 	return 0;
 }
 
-sub communicate {
-	my $self=shift;
-	my $msg=shift;
-	$self->{logger}->info("<" . $self->{name} . "> $msg");
-}
-
-sub dumpme {
-	my $self=shift;
-	
-	say Data::Dumper->Dump([$self]);
-}
 __PACKAGE__->meta->make_immutable;
 1;

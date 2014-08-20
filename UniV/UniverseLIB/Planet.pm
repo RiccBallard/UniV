@@ -9,36 +9,13 @@ use Moose::Util::TypeConstraints;
 
 use namespace::autoclean;
 #use Galaxy; 
-use Location; 
+use Objects::Location;
+use Objects::Space; 
 use MooseX::Storage;
 our $VERSION = '0.01';  
 with Storage('format' => 'JSON', 'io' => 'File');
 
-has 'debug' => (
-	is => 'rw',
-	isa => 'Bool',
-);
-
-has 'loc' => (
-	is => 'rw',
-	isa => 'UniverseLIB::Location',
-);
-
-has 'name' => (
-	is => 'rw',
-	isa => 'Str',
-);
-
-has 'logger' => (
-	is => 'rw',
-	isa => 'Log::Log4perl::Logger',
-	traits   => [ 'DoNotSerialize' ],
-);
-
-has 'config' => (
-	is => 'rw',
-	isa => 'HashRef',
-);
+extends 'UniverseLIB::Objects::Space';
 
 has 'class_type' => (
 	is => 'rw',
@@ -115,17 +92,5 @@ sub communicate {
 	$self->{logger}->info("$display $msg");
 }
 
-#sub store_me {
-#	my $self=shift;
-#	
-#	$self->freeze();
-#	$self->store('planet.json'); 
-#}
-
-sub dumpme {
-	my $self=shift;
-	
-	say Data::Dumper->Dump([$self]);
-}
 __PACKAGE__->meta->make_immutable;
 1;

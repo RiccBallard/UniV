@@ -8,47 +8,20 @@ use Moose;
 use Moose::Util::TypeConstraints;
 
 use namespace::autoclean;
-use Location;  
+use Objects::Location;
+use Objects::Space;  
 use Galaxy; 
 use Configuration;
 use MooseX::Storage;
 our $VERSION = '0.01';  
 with Storage('format' => 'JSON', 'io' => 'File');
 
-has 'debug' => (
-	is => 'rw',
-	isa => 'Bool',
-);
-
-has 'loc' => (
-	is => 'rw',
-	isa => 'UniverseLIB::Location',
-	required => 0,
-);
-
-has 'name' => (
-	is => 'rw',
-	isa => 'Str',
-	required => 0,
-	);
+extends 'UniverseLIB::Objects::Space';
 
 has 'galaxies' => (
 	is => 'rw',
 	isa => 'HashRef[UniverseLIB::Galaxy]',
 	required => 0, 
-);
-
-has 'logger' => (
-	is => 'rw',
-	isa => 'Log::Log4perl::Logger',
-	traits   => [ 'DoNotSerialize' ],
-	required => 1,
-);
-
-has 'config' => (
-	is => 'rw',
-	isa => 'HashRef',
-	required => 0,
 );
 
 sub init {
@@ -65,7 +38,7 @@ sub init {
 	#create Galaxies
 	for (my $x=1; $x < ($galaxy_config->{size_x}+1); $x++) {
 		for (my $y=1; $y < ($galaxy_config->{size_y}+1); $y++) {
-			my $loc = UniverseLIB::Location->new(x=>$x, y=>$y, z=>0);
+			my $loc = UniverseLIB::Objects::Location->new(x=>$x, y=>$y, z=>0);
 			my $gal = UniverseLIB::Galaxy->new( logger=>$self->{logger}, name=>$galaxy_config->{name} . " $x-$y", in_universe=>$self, loc=>$loc);
 			$gal->init();
 			$gal->{debug}=$galaxy_config->{debug};
@@ -104,16 +77,11 @@ sub validate_cords {
 	return 0;
 }
 
-sub communicate {
-	my $self=shift;
-	my $msg=shift;
-	$self->{logger}->info("<" . $self->{name} . "> $msg");
-}
+#sub communicate {
+#	my $self=shift;
+#	my $msg=shift;
+#	$self->{logger}->info("<" . $self->{name} . "> $msg");
+#}
 
-sub dumpme {
-	my $self=shift;
-	
-	say Data::Dumper->Dump([$self->{galaxies}]);
-}
 __PACKAGE__->meta->make_immutable;
 1;
