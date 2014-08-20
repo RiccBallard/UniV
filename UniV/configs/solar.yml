@@ -1,6 +1,6 @@
 config:
-	size_x: 3
-	size_y: 3
+	size_x: 1
+	size_y: 1
 	name: Solar System
 	debug: 0
 	

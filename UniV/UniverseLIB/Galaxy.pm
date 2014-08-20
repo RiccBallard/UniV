@@ -37,8 +37,8 @@ sub init {
 	$self->{debug} = $self->{config}->{debug} if (! $self->debug);
 	my $solar_system = UniverseLIB::Configuration->instance->get_config('solarsystem');
 	
-	die "invalid x in Galaxy" if ( ! validate_cords( $solar_system->{size_x} ));
-	die "invalid y in Galaxy" if ( ! validate_cords( $solar_system->{size_y} ));
+	die "invalid x in Galaxy" if ( ! $self->validate_cords( $solar_system->{size_x} ));
+	die "invalid y in Galaxy" if ( ! $self->validate_cords( $solar_system->{size_y} ));
 	
 	#create solar systems
 	for (my $x=1; $x < ($solar_system->{size_x}+1); $x++) {
@@ -52,11 +52,11 @@ sub init {
 	} 	
 } 
 
-sub validate_cords {
-	my $parm=shift;
-	return 1 if ($parm % 2 == 1);
-	return 0;
-}
+#sub validate_cords {
+#	my $parm=shift;
+#	return 1 if ($parm % 2 == 1);
+#	return 0;
+#}
 
 sub pulse {
 	my $self=shift;

@@ -33,6 +33,13 @@ sub communicate {
 	$self->{logger}->info("<" . $self->{name} . "> $msg");
 }
 
+sub validate_cords {
+	my $self=shift;
+	my $parm=shift;
+	return 1 if ($parm % 2 == 1);
+	return 0;
+}
+
 sub dumpme {
 	my $self=shift;
 	
