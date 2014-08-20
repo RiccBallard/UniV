@@ -32,8 +32,8 @@ sub init {
 	$self->{debug} = $self->{config}->{debug} if (! $self->debug);
 	my $galaxy_config = UniverseLIB::Configuration->instance->get_config('galaxy');
 	$self->{name} = "Universe";
-	die "invalid x in " . $galaxy_config->{name} if ( ! validate_cords( $galaxy_config->{size_x} ));
-	die "invalid y in " . $galaxy_config->{name} if ( ! validate_cords( $galaxy_config->{size_y} ));
+	die "invalid x in " . $galaxy_config->{name} if ( ! $self->validate_cords( $galaxy_config->{size_x} ));
+	die "invalid y in " . $galaxy_config->{name} if ( ! $self->validate_cords( $galaxy_config->{size_y} ));
 	
 	#create Galaxies
 	for (my $x=1; $x < ($galaxy_config->{size_x}+1); $x++) {
@@ -66,15 +66,6 @@ sub load_me {
 	my $self=shift;
 	
 	$self = Universe->load('./data/universe.json');
-}
-
-sub validate_cords {
-	my $parm=shift;
-#	return 1 if ($parm % 2 == 1);
-	if ($parm % 2 == 1) {
-		return 1;
-	}
-	return 0;
 }
 
 #sub communicate {

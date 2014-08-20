@@ -48,7 +48,7 @@ $universe_obj->{debug}=1;
 if ($fake) {
 	while (1) {
 		$universe_obj->pulse();
-		sleep(10);
+		sleep($universe_obj->{config}->{pulse_speed});
 	}
 }
 exit(0);

@@ -2,5 +2,6 @@ config:
 	size: 1
 	name: Universe
 	debug: 0
+	pulse_speed: 2
 	
 	
