@@ -2,5 +2,5 @@ config:
 	size_x: 5
 	size_y: 5
 	name: Planet
-	debug: 0
+	debug: 1
 	
