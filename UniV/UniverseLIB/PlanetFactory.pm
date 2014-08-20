@@ -80,7 +80,7 @@ sub make_planet {
 										loc=>$args->{loc});
 
 	# Fill in Planet object
-	$planet->{name}=$args->{sun}->{name}." / " . "Planet " . $args->{loc}->{x} . "-" . $args->{loc}->{y};
+	$planet->{name}=$args->{sun}->{name}." / " . "Planet " . $args->{loc}->{x};
 	
 	$planet->{color} = $self->pick_color();	
 	$planet->{size} = $self->pick_size();

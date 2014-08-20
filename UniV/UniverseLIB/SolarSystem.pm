@@ -36,8 +36,8 @@ sub init {
 	$self->{debug} = $self->{config}->{debug} if (! $self->debug);
 	my $planet_config = UniverseLIB::Configuration->instance->get_config('planet');
 	
-	die "invalid x in " . $planet_config->{name} if ( ! validate_cords( $planet_config->{size_x} ));
-	die "invalid y in " . $planet_config->{name} if ( ! validate_cords( $planet_config->{size_y} ));
+	die "invalid x in " . $planet_config->{name} if ( ! $self->validate_cords( $planet_config->{size_x} ));
+	die "invalid y in " . $planet_config->{name} if ( ! $self->validate_cords( $planet_config->{size_y} ));
 	
 	my $sun_x = ceil($planet_config->{size_x}/2);
 	my $sun_y = ceil($planet_config->{size_y}/2);
@@ -58,17 +58,6 @@ sub pulse {
 	}
 }
 
-sub validate_cords {
-	my $parm=shift;
-	return 1 if ($parm % 2 == 1);
-	return 0;
-}
-
-#sub communicate {
-#	my $self=shift;
-#	my $msg=shift;
-#	$self->{logger}->info("<" . $self->{name} . "> $msg");
-#}
 
 __PACKAGE__->meta->make_immutable;
 1;

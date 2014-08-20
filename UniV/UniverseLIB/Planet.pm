@@ -54,8 +54,8 @@ sub init {
 	$self->{config} = UniverseLIB::Configuration->instance->get_config('planet');
 	my $moon_config = UniverseLIB::Configuration->instance->get_config('moon');
 	$self->{debug} = $self->{config}->{debug} if (! $self->debug);
-#	die "invalid x in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_x} ));
-#	die "invalid y in " . $self->{name} if ( ! validate_cords( $self->{config}->{size_y} ));
+#	die "invalid x in " . $self->{name} if ( ! $self->validate_cords( $self->{config}->{size_x} ));
+#	die "invalid y in " . $self->{name} if ( ! $self->validate_cords( $self->{config}->{size_y} ));
 	
 	# TODO: add moon or moons to planets
 	
@@ -80,10 +80,10 @@ sub pulse {
 #	}
 }
 
-sub validate_cords {
-	return 1 if ($_ % 2 == 1);
-	return 0;
-}
+#sub validate_cords {
+#	return 1 if ($_ % 2 == 1);
+#	return 0;
+#}
 
 sub communicate {
 	my $self=shift;
