@@ -81,14 +81,11 @@ sub make_planet {
 
 	# Fill in Planet object
 	$planet->{name}=$args->{sun}->{name}." / " . "Planet " . $args->{loc}->{x} . "-" . $args->{loc}->{y};
-			
-	say "     Color is: " . $self->pick_color();
-	say "      Size is: " . $self->pick_size();
-	say "Class Type is: " . $self->pick_type();
 	
+	$planet->{color} = $self->pick_color();	
+	$planet->{size} = $self->pick_size();
+	$planet->{class_type} = $self->pick_type();
 	$planet->init();
-	$planet->{debug}=$self->{debug};
-	# return Planet
 	return $planet;
 }
 

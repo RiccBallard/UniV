@@ -45,6 +45,11 @@ has 'class_type' => (
 	isa => 'Str',
 );
 
+has 'color' => (
+	is => 'rw',
+	isa => 'Str',
+);
+
 has 'size' => (
 	is => 'rw',
 	isa => 'Int',
@@ -106,7 +111,8 @@ sub validate_cords {
 sub communicate {
 	my $self=shift;
 	my $msg=shift;
-	$self->{logger}->info("<" . $self->{name} . "> $msg");
+	my $display = "<" . $self->{name} . "-" . $self->{color} . "-" . $self->{class_type} . ">";
+	$self->{logger}->info("$display $msg");
 }
 
 #sub store_me {
