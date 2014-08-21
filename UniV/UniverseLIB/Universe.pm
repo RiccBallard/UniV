@@ -12,6 +12,8 @@ use Objects::Location;
 use Objects::Space;  
 use Galaxy; 
 use Configuration;
+use PlanetFactory;
+use MoonFactory;
 use MooseX::Storage;
 our $VERSION = '0.01';  
 with Storage('format' => 'JSON', 'io' => 'File');
@@ -28,6 +30,9 @@ sub init {
 	my $self=shift;
 	my $args=shift;
 	
+	UniverseLIB::Configuration->initialize(filename=>"./configs/project.yml");
+	UniverseLIB::PlanetFactory->initialize(logger=>$self->{logger});
+	UniverseLIB::MoonFactory->initialize(logger=>$self->{logger});
 	$self->{config} = UniverseLIB::Configuration->instance->get_config('universe');
 	$self->{debug} = $self->{config}->{debug} if (! $self->debug);
 	my $galaxy_config = UniverseLIB::Configuration->instance->get_config('galaxy');
