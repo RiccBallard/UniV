@@ -15,7 +15,7 @@ extends 'UniverseLIB::Objects::Space';
 
 has 'my_planet' => (
 	is => 'ro',
-	isa =>'HashRef[UniverseLIB::Planet]',
+	isa =>'UniverseLIB::Planet',
 );
 
 sub init {
@@ -26,6 +26,8 @@ sub init {
 sub pulse {
 	my $self=shift;
 	$self->communicate("nudging life...");
+	
+
 }
 
 __PACKAGE__->meta->make_immutable;

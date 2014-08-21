@@ -41,14 +41,15 @@ sub validate_cords {
 }
 
 sub rotate_object {
-	my $parent=shift;
+	my $self=shift;
 	my $spaceObj=shift;
+	my $around=shift;
 	
-	my $max_x = $parent->{config}->{size_x};
-	my $max_y = $parent->{config}->{size_y};
+	my $max_x = $around->{size_x};
+	my $max_y = $around->{size_y};
 
-	my $center_x = $parent->{loc}->{x};
-	my $center_y = $parent->{loc}->{y};
+	my $center_x = int(($around->{size_x}/2) + .5);
+	my $center_y = int(($around->{size_y}/2) + .5);
 	
 	my $spaceObj_x = $spaceObj->{loc}->{x};
 	my $spaceObj_y = $spaceObj->{loc}->{y};

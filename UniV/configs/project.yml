@@ -6,6 +6,7 @@ config:
 	planet: ./configs/planet.yml
 	moon: ./configs/moon.yml
 	planet_factory: ./configs/planet_factory.yml
+	moon_factory: ./configs/moon_factory.yml
 	
 	
 	

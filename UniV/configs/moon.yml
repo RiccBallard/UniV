@@ -3,3 +3,4 @@ config:
 	size_y: 5
 	name: Moon
 	max: 3
+	debug: 1

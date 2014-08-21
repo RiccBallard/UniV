@@ -68,15 +68,16 @@ sub pulse {
 	$self->communicate("Moving planets...")  if ($self->{debug});
 	
 	# Logic to move planets around its sun
-	# TODO: add moving logic pf planets
 	if ($self->{planets}) {
 		foreach my $planet( keys ($self->{planets})) {
 #			say "pulsing for planet at " . $self->{planets}->{$planet}->{loc}->{x} . " - " .$self->{planets}->{$planet}->{loc}->{y}; 
-			$self->rotate_object($self->{planets}->{$planet});
+			$self->rotate_object($self->{planets}->{$planet}, { size_x=>$self->{config}->{size_x},
+																size_y=>$self->{config}->{size_y},				
+															  });
 			$self->{planets}->{$planet}->pulse();
 		}
 	}
-	$self->display_solar_system();
+#	$self->display_solar_system();
 }
 
 sub display_solar_system {
