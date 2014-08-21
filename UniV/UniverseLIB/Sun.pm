@@ -53,7 +53,7 @@ sub init {
 	for (my $x=1; $x < ($self->{config}->{size_x}+1); $x++) {
 			# Skip suns location
 			next if ( ($x == $self->{loc}->{x}) && ($x == $self->{loc}->{y}));
-#			next if (rand(100) < 75);
+			next if (rand(100) < 30);
 			my $loc = UniverseLIB::Objects::Location->new(x=>$x, y=>$x, z=>0);
 			my $planet = $planet_factory->make_planet({loc=>$loc, sun=>$self});
 			$planet->{distince_x} = abs($self->{loc}->{x} - $planet->{loc}->{x});
@@ -72,71 +72,11 @@ sub pulse {
 	if ($self->{planets}) {
 		foreach my $planet( keys ($self->{planets})) {
 #			say "pulsing for planet at " . $self->{planets}->{$planet}->{loc}->{x} . " - " .$self->{planets}->{$planet}->{loc}->{y}; 
-			$self->adjust_locations($self->{planets}->{$planet});
+			$self->rotate_object($self->{planets}->{$planet});
 			$self->{planets}->{$planet}->pulse();
 		}
 	}
 	$self->display_solar_system();
-}
-
-sub adjust_locations {
-	my $self=shift;
-	my $planet=shift;
-	
-	my $max_x = $self->{config}->{size_x};
-	my $max_y = $self->{config}->{size_y};
-
-	my $center_x = $self->{loc}->{x};
-	my $center_y = $self->{loc}->{y};
-	
-	my $planet_x = $planet->{loc}->{x};
-	my $planet_y = $planet->{loc}->{y};
-		
-#	say "system size is $max_x, $max_y";
-#	say "sun is at $center_x, $center_y";
-#	say "planet is at $planet_x, $planet_y";
-#	say "distince x = $distince_x";
-#	say "distince y = $distince_y";
-	
-	# if planet is above the sun move right or down
-	if ($planet_y < $center_y) {
-		my $now_dy = abs($center_y-$planet_y);
-		if ($now_dy < $planet->{distince_y} && $planet_x < $center_x) {
-			$planet_y--;
-		} else {
-			$planet_x++;				
-		}
-		my $now_dx = abs($center_x-$planet_x);
-		if ($now_dx > $planet->{distince_x}) {
-			$planet_x--;
-			$planet_y++;
-		}
-	# if planet is below the sun move down or left		
-	} elsif ($planet_y > $center_y) {
-		my $now_dy = abs($center_y-$planet_y);
-		if ($now_dy < $planet->{distince_y} && $planet_x > $center_x) {
-			$planet_y++;
-		} else {
-			$planet_x--;
-		}	
-		my $now_dx = abs($center_x-$planet_x);
-		if ($now_dx > $planet->{distince_x}) {
-			$planet_x++;
-			$planet_y--;
-		}
-	# if planet is on level with the sun move down if past or up if in front of		
-	} elsif ($planet_y == $center_y) {
-		if ($planet_x > $center_x) {
-			$planet_y++;	
-		}
-		if ($planet_x < $center_x) {
-			$planet_y--;	
-		}
-	}
-	 
-#	say "planet moved to $planet_x, $planet_y";
-	$planet->{loc}->{x}=$planet_x;
-	$planet->{loc}->{y}=$planet_y;
 }
 
 sub display_solar_system {

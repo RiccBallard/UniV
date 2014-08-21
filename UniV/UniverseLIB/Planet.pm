@@ -8,7 +8,7 @@ use Moose;
 use Moose::Util::TypeConstraints;
 
 use namespace::autoclean;
-#use Galaxy; 
+use MoonFactory; 
 use Objects::Location;
 use Objects::Space; 
 use MooseX::Storage;
@@ -51,25 +51,23 @@ sub init {
 	my $self=shift;
 	my $args=shift;
 	
-	$self->{config} = UniverseLIB::Configuration->instance->get_config('planet');
 	my $moon_config = UniverseLIB::Configuration->instance->get_config('moon');
 	$self->{debug} = $self->{config}->{debug} if (! $self->debug);
-#	die "invalid x in " . $self->{name} if ( ! $self->validate_cords( $self->{config}->{size_x} ));
-#	die "invalid y in " . $self->{name} if ( ! $self->validate_cords( $self->{config}->{size_y} ));
+
+	my $factory = UniverseLIB::MoonFactory->instance; 	
 	
-	# TODO: add moon or moons to planets
+	#create planet moon(s)
+	for (my $x=1; $x < 8; $x++) {
+			# Skip suns location
+			next if ( ($x == $self->{loc}->{x}) && ($x == $self->{loc}->{y}));
+			next if (rand(100) < 80);
+			my $loc = UniverseLIB::Objects::Location->new(x=>$x, y=>$x, z=>0);
+			my $moon = $factory->make_moon({loc=>$loc, planet=>$self});
+			$moon->{distince_x} = abs($self->{loc}->{x} - $moon->{loc}->{x});
+			$moon->{distince_y} = abs($self->{loc}->{y} - $moon->{loc}->{y});
+			$self->{planets}{"$x,$x,0"}=$moon;	
+	} 	
 	
-#	$self->{name}=$self->{in_solarsystem}->{name}." / " . $self->{name};
-	
-	# TODO: add size, color, class of planet
-	#create solar systems
-#	for (my $x=0; $x < $galaxy_config->{size}; $x++) {
-#		for (my $y=0; $y < $galaxy_config->{size}; $y++) {
-#			my $loc = UniverseLIB::Location->new(x=>$x, y=>$y, z=>0);
-#			my $gal = UniverseLIB::Galaxy->new( logger=>$self->{logger}, config=>$self->{config}, name=>"x=$x y=$y", loc=>$loc);
-#			$self->{galaxies}{"$x,$y,0"}=$gal;
-#		}	
-#	} 	
 }
 
 sub pulse {

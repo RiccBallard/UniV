@@ -66,7 +66,7 @@ sub make_planet {
 		@{ $self->{color} } = split (",", $self->{factory_config}->{color});
 		@{ $self->{planet_size} } = split (",", $self->{factory_config}->{size});	
 		@{ $self->{clazz_type} } = split (",", $self->{factory_config}->{class_type});
-		@{ $self->{clazz_names} } = split (",", $self->{factory_config}->{class_type});
+		@{ $self->{clazz_names} } = split (",", $self->{factory_config}->{class_names});
 	}
 	
 	$self->{debug}=1 if ($self->{config}->{debug});
@@ -81,7 +81,7 @@ sub make_planet {
 
 	# Fill in Planet object
 	$planet->{name}=$args->{sun}->{name}." / " . "Planet " . $args->{loc}->{x};
-	
+	$planet->{config} = $self->{planet_config};
 	$planet->{color} = $self->pick_color();	
 	$planet->{size} = $self->pick_size();
 	$planet->{class_type} = $self->pick_type();

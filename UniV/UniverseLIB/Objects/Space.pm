@@ -40,6 +40,66 @@ sub validate_cords {
 	return 0;
 }
 
+sub rotate_object {
+	my $parent=shift;
+	my $spaceObj=shift;
+	
+	my $max_x = $parent->{config}->{size_x};
+	my $max_y = $parent->{config}->{size_y};
+
+	my $center_x = $parent->{loc}->{x};
+	my $center_y = $parent->{loc}->{y};
+	
+	my $spaceObj_x = $spaceObj->{loc}->{x};
+	my $spaceObj_y = $spaceObj->{loc}->{y};
+		
+#	say "system size is $max_x, $max_y";
+#	say "sun is at $center_x, $center_y";
+#	say "planet is at $spaceObj_x, $spaceObj_y";
+#	say "distince x = $distince_x";
+#	say "distince y = $distince_y";
+	
+	# if planet is above the sun move right or down
+	if ($spaceObj_y < $center_y) {
+		my $now_dy = abs($center_y-$spaceObj_y);
+		if ($now_dy < $spaceObj->{distince_y} && $spaceObj_x < $center_x) {
+			$spaceObj_y--;
+		} else {
+			$spaceObj_x++;				
+		}
+		my $now_dx = abs($center_x-$spaceObj_x);
+		if ($now_dx > $spaceObj->{distince_x}) {
+			$spaceObj_x--;
+			$spaceObj_y++;
+		}
+	# if planet is below the sun move down or left		
+	} elsif ($spaceObj_y > $center_y) {
+		my $now_dy = abs($center_y-$spaceObj_y);
+		if ($now_dy < $spaceObj->{distince_y} && $spaceObj_x > $center_x) {
+			$spaceObj_y++;
+		} else {
+			$spaceObj_x--;
+		}	
+		my $now_dx = abs($center_x-$spaceObj_x);
+		if ($now_dx > $spaceObj->{distince_x}) {
+			$spaceObj_x++;
+			$spaceObj_y--;
+		}
+	# if planet is on level with the sun move down if past or up if in front of		
+	} elsif ($spaceObj_y == $center_y) {
+		if ($spaceObj_x > $center_x) {
+			$spaceObj_y++;	
+		}
+		if ($spaceObj_x < $center_x) {
+			$spaceObj_y--;	
+		}
+	}
+	 
+#	say "planet moved to $spaceObj_x, $spaceObj_y";
+	$spaceObj->{loc}->{x}=$spaceObj_x;
+	$spaceObj->{loc}->{y}=$spaceObj_y;
+}
+
 sub dumpme {
 	my $self=shift;
 	
